@@ -5,6 +5,13 @@ using System.Web.Http;
 
 namespace SmoresIdleService.Controllers
 {
+	public enum UserStatusEnum
+	{
+		Unknown = 0,
+		Idle = 1,
+		Active = 2
+	}
+
 	public class StatusController : ApiController
 	{
 		[HttpGet]
@@ -13,7 +20,7 @@ namespace SmoresIdleService.Controllers
 			using (UserStatusDataContext context = new UserStatusDataContext())
 			{
 				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == id);
-				return user == null ? -1 : user.Status;
+				return user == null ? (int) UserStatusEnum.Unknown : user.Status;
 			}
 		}
 
