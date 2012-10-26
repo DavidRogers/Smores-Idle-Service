@@ -86,6 +86,8 @@ namespace SmoresIdleService
 		
 		private int _Status;
 		
+		private System.DateTime _LastUpdated;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -94,6 +96,8 @@ namespace SmoresIdleService
     partial void OnUserHashChanged();
     partial void OnStatusChanging(int value);
     partial void OnStatusChanged();
+    partial void OnLastUpdatedChanging(System.DateTime value);
+    partial void OnLastUpdatedChanged();
     #endregion
 		
 		public UserStatus()
@@ -137,6 +141,26 @@ namespace SmoresIdleService
 					this._Status = value;
 					this.SendPropertyChanged("Status");
 					this.OnStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastUpdated", DbType="DateTime NOT NULL")]
+		public System.DateTime LastUpdated
+		{
+			get
+			{
+				return this._LastUpdated;
+			}
+			set
+			{
+				if ((this._LastUpdated != value))
+				{
+					this.OnLastUpdatedChanging(value);
+					this.SendPropertyChanging();
+					this._LastUpdated = value;
+					this.SendPropertyChanged("LastUpdated");
+					this.OnLastUpdatedChanged();
 				}
 			}
 		}
