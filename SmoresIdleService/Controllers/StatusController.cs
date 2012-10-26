@@ -25,7 +25,7 @@ namespace SmoresIdleService.Controllers
 		}
 
 		[HttpPost]
-		public void UniqueUser(string id, int status)
+		public void UniqueUser(string id, [FromBody]int status)
 		{
 			using (UserStatusDataContext context = new UserStatusDataContext())
 			{
