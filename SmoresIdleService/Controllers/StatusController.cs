@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 namespace SmoresIdleService.Controllers
@@ -15,22 +17,25 @@ namespace SmoresIdleService.Controllers
 
 	public class StatusController : ApiController
 	{
-		public UserStatus Post(UserStatus userStatus)
+		public HttpResponseMessage PostUserStatus(UserStatus userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 			{
 				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.UserHash);
-				return new UserStatus
+				return new HttpResponseMessage
 				{
-					Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
-					LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
-					UserHash = userStatus.UserHash
+					Content = new ObjectContent(typeof(UserStatus), new UserStatus
+						{
+							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
+							LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
+							UserHash = userStatus.UserHash
+						}, new JsonMediaTypeFormatter())
 				};
 			}
 		}
 
-		public UserStatus Put(UserStatus userStatus)
+		public void PutUserStatus(UserStatus userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			UserStatus user;
@@ -49,13 +54,6 @@ namespace SmoresIdleService.Controllers
 
 				context.SubmitChanges();
 			}
-
-			return new UserStatus
-			{
-				LastUpdated = user.LastUpdated,
-				Status = user.Status,
-				UserHash = user.UserHash
-			};
 		}
 	}
 }
