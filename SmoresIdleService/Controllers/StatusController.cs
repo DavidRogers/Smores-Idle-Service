@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Web.Http;
+using SmoresIdleService.Models;
 
 namespace SmoresIdleService.Controllers
 {
@@ -17,31 +18,31 @@ namespace SmoresIdleService.Controllers
 
 	public class StatusController : ApiController
 	{
-		public HttpResponseMessage Post(UserStatus userStatus)
+		public HttpResponseMessage Post(UserStatusModel userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 			{
-				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.UserHash);
+				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
 				return new HttpResponseMessage
 				{
-					Content = new ObjectContent(typeof(UserStatus), new UserStatus
+					Content = new ObjectContent(typeof(UserStatus), new UserStatusModel
 						{
 							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
 							LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
-							UserHash = userStatus.UserHash
+							Token = userStatus.Token
 						}, new JsonMediaTypeFormatter())
 				};
 			}
 		}
 
-		public void Put(UserStatus userStatus)
+		public void Put(UserStatusModel userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			UserStatus user;
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 			{
-				user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.UserHash);
+				user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
 				if (user != null)
 				{
 					user.Status = userStatus.Status;
@@ -49,7 +50,7 @@ namespace SmoresIdleService.Controllers
 				}
 				else
 				{
-					context.UserStatus.InsertOnSubmit(user = new UserStatus { UserHash = userStatus.UserHash, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
+					context.UserStatus.InsertOnSubmit(user = new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
 				}
 
 				context.SubmitChanges();
