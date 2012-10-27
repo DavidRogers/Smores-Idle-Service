@@ -11,7 +11,7 @@ namespace SmoresIdleService
 			//				routeTemplate: "status/user/{id}",
 			//				defaults: new { controller = "Status", action = "UniqueUser", id = RouteParameter.Optional }
 
-			config.Routes.MapHttpRoute("StatusApi", "{Controller}",
+			config.Routes.MapHttpRoute("StatusApi", "status/user",
 				new { controller = "Status" },
 				new { httpMethod = new HttpMethodConstraint(HttpMethod.Post, HttpMethod.Put) }
 			);
