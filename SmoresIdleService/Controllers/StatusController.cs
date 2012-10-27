@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace SmoresIdleService.Controllers
@@ -41,16 +42,8 @@ namespace SmoresIdleService.Controllers
 					context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = id, Status = status, LastUpdated = DateTime.UtcNow });
 				}
 
-				try
-				{
-					context.SubmitChanges();
-				}
-				catch (Exception)
-				{
-					// log something...
-				}
+				context.SubmitChanges();
 			}
-
 		}
 	}
 }
