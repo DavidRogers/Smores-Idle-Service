@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace SmoresIdleService.Controllers
@@ -17,8 +15,7 @@ namespace SmoresIdleService.Controllers
 
 	public class StatusController : ApiController
 	{
-		[HttpGet]
-		public int UniqueUser(string id)
+		public int Post(string id)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
@@ -28,8 +25,7 @@ namespace SmoresIdleService.Controllers
 			}
 		}
 
-		[HttpPost]
-		public void UniqueUser(string id, int status)
+		public void Put(string id, int status)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
