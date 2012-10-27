@@ -5,7 +5,7 @@ namespace SmoresIdleService.Models
 {
 	public class UserStatusModel
 	{
-		[JsonProperty]
+		[JsonProperty(Required = Required.Always)]
 		public string Token { get; set; }
 
 		[JsonProperty]
@@ -13,6 +13,5 @@ namespace SmoresIdleService.Models
 
 		[JsonProperty]
 		public DateTime LastUpdated { get; set; }
-
 	}
 }
