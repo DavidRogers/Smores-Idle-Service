@@ -26,7 +26,7 @@ namespace SmoresIdleService.Controllers
 				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
 				return new HttpResponseMessage
 				{
-					Content = new ObjectContent(typeof(UserStatus), new UserStatusModel
+					Content = new ObjectContent(typeof(UserStatusModel), new UserStatusModel
 						{
 							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
 							LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
@@ -39,10 +39,9 @@ namespace SmoresIdleService.Controllers
 		public void Put(UserStatusModel userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
-			UserStatus user;
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 			{
-				user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
+				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
 				if (user != null)
 				{
 					user.Status = userStatus.Status;
@@ -50,7 +49,7 @@ namespace SmoresIdleService.Controllers
 				}
 				else
 				{
-					context.UserStatus.InsertOnSubmit(user = new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
+					context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
 				}
 
 				context.SubmitChanges();
