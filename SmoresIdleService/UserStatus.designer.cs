@@ -35,14 +35,6 @@ namespace SmoresIdleService
     partial void DeleteUserStatus(UserStatus instance);
     #endregion
 		
-		public UserStatusDataContext() : 
-				base("Data Source=9b40ce93-2d72-42d9-a4c1-a0f6015a9d04.sqlserver.sequelizer.com;User ID" +
-						"=ophsjzldiglbranl;Password=q6ZrNmhv2YUCscZJMSHMq2ceE7nTS63MdfYRaw4wA6ZFj5Wrw2x5y" +
-						"2kx3VUP7wL5", mappingSource)
-		{
-			OnCreated();
-		}
-		
 		public UserStatusDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
