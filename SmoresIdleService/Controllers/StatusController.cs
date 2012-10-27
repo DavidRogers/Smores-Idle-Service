@@ -9,7 +9,8 @@ namespace SmoresIdleService.Controllers
 	{
 		Unknown = 0,
 		Idle = 1,
-		Active = 2
+		Busy = 3,
+		Active = 5
 	}
 
 	public class StatusController : ApiController
