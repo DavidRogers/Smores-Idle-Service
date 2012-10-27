@@ -105,7 +105,7 @@ namespace SmoresIdleService
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserHash", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserHash", DbType="Char(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
 		public string UserHash
 		{
 			get
