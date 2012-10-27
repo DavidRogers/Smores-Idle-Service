@@ -29,7 +29,7 @@ namespace SmoresIdleService.Controllers
 		}
 
 		[HttpPost]
-		public void UniqueUser(string id, [FromBody]int status)
+		public void UniqueUser(string id, int status)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
