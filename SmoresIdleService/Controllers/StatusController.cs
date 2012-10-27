@@ -17,7 +17,7 @@ namespace SmoresIdleService.Controllers
 
 	public class StatusController : ApiController
 	{
-		public HttpResponseMessage PostUserStatus(UserStatus userStatus)
+		public HttpResponseMessage Post(UserStatus userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
@@ -35,7 +35,7 @@ namespace SmoresIdleService.Controllers
 			}
 		}
 
-		public void PutUserStatus(UserStatus userStatus)
+		public void Put(UserStatus userStatus)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			UserStatus user;
