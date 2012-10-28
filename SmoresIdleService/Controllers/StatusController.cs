@@ -18,17 +18,17 @@ namespace SmoresIdleService.Controllers
 
 	public class StatusController : ApiController
 	{
-		public UserStatusModel Get(UserStatusModel userStatus)
+		public UserStatusModel Get(string token)
 		{
 			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 			{
-				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
+				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == token);
 				return new UserStatusModel
 					{
 						Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
 						LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
-						Token = userStatus.Token
+						Token = userToken
 					};
 			}
 		}
