@@ -13,7 +13,7 @@ namespace SmoresIdleService
 
 			config.Routes.MapHttpRoute("StatusApi", "status/user",
 				new { controller = "Status" },
-				new { httpMethod = new HttpMethodConstraint(HttpMethod.Post, HttpMethod.Put) }
+				new { httpMethod = new HttpMethodConstraint(HttpMethod.Post, HttpMethod.Get) }
 			);
 		}
 	}
