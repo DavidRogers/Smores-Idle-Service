@@ -28,7 +28,7 @@ namespace SmoresIdleService.Controllers
 					{
 						Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
 						LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
-						Token = userToken
+						Token = token
 					};
 			}
 		}
