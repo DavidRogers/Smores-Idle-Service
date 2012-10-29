@@ -3,6 +3,8 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
+using System.Web.Caching;
 using System.Web.Http;
 using SmoresIdleService.Models;
 
@@ -20,38 +22,54 @@ namespace SmoresIdleService.Controllers
 	{
 		public UserStatusModel Get(string token)
 		{
-			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
-			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
+			if (string.IsNullOrEmpty(token))
+				return null;
+
+			UserStatusModel model = HttpRuntime.Cache.Get(token) as UserStatusModel;
+			if (model == null)
 			{
-				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == token);
-				return new UserStatusModel
-					{
-						Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
-						LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
-						Token = token
-					};
+				string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
+				using (UserStatusDataContext context = new UserStatusDataContext(uriString))
+				{
+					UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == token);
+					model = new UserStatusModel
+						{
+							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
+							LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
+							Token = token
+						};
+				}
+				HttpRuntime.Cache.Add(token, model, null, Cache.NoAbsoluteExpiration, TimeSpan.FromHours(24), CacheItemPriority.Normal, null);
 			}
+
+			return model;
 		}
 
 		public HttpResponseMessage Post(UserStatusModel userStatus)
 		{
-			string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
-			using (UserStatusDataContext context = new UserStatusDataContext(uriString))
+			if (ModelState.IsValid)
 			{
-				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
-				if (user != null)
+				string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
+				using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 				{
-					user.Status = userStatus.Status;
-					user.LastUpdated = DateTime.UtcNow;
-				}
-				else
-				{
-					context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
-				}
+					UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
+					if (user != null)
+					{
+						user.Status = userStatus.Status;
+						user.LastUpdated = DateTime.UtcNow;
+						HttpRuntime.Cache.Remove(userStatus.Token);
+					}
+					else
+					{
+						context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
+					}
 
-				context.SubmitChanges();
+					context.SubmitChanges();
+				}
+				return new HttpResponseMessage(HttpStatusCode.Accepted);
 			}
-			return new HttpResponseMessage(HttpStatusCode.Accepted);
+
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
 	}
 }
