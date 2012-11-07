@@ -36,7 +36,7 @@ namespace SmoresIdleService.Controllers
 					model = new UserStatusModel
 						{
 							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
-							LastUpdated = user == null ? DateTime.UtcNow : user.LastUpdated,
+							LastUpdated = user == null ? new DateTime().ToUniversalTime() : user.LastUpdated,
 							Token = token
 						};
 				}
