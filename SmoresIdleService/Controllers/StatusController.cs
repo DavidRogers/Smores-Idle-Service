@@ -23,7 +23,7 @@ namespace SmoresIdleService.Controllers
 	{
 		public UserStatusModel Get(string token)
 		{
-			if (string.IsNullOrEmpty(token))
+			if (string.IsNullOrEmpty(token) || token.Length != 32)
 				return null;
 
 			UserStatusModel model = HttpRuntime.Cache.Get(token) as UserStatusModel;
@@ -50,6 +50,9 @@ namespace SmoresIdleService.Controllers
 		{
 			if (ModelState.IsValid)
 			{
+				if (string.IsNullOrEmpty(userStatus.Token) || userStatus.Token.Length != 32 || !Enum.IsDefined(typeof(UserStatusEnum), userStatus.Status))
+					return new HttpResponseMessage(HttpStatusCode.BadRequest);
+
 				string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
 				using (UserStatusDataContext context = new UserStatusDataContext(uriString))
 				{
@@ -70,7 +73,7 @@ namespace SmoresIdleService.Controllers
 				return new HttpResponseMessage(HttpStatusCode.Accepted);
 			}
 
-			throw new HttpResponseException(HttpStatusCode.BadRequest);
+			return new HttpResponseMessage(HttpStatusCode.BadRequest);
 		}
 	}
 }
