@@ -23,55 +23,13 @@ namespace SmoresIdleService.Controllers
 	{
 		public UserStatusModel Get(string token)
 		{
-			if (string.IsNullOrEmpty(token) || token.Length != 32)
-				return null;
-
-			UserStatusModel model = HttpRuntime.Cache.Get(token) as UserStatusModel;
-			if (model == null)
-			{
-				string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
-				using (UserStatusDataContext context = new UserStatusDataContext(uriString))
-				{
-					UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == token);
-					model = new UserStatusModel
-						{
-							Status = user == null ? (int) UserStatusEnum.Unknown : user.Status,
-							LastUpdated = user == null ? new DateTime().ToUniversalTime() : user.LastUpdated,
-							Token = token
-						};
-				}
-				HttpRuntime.Cache.Add(token, model, null, Cache.NoAbsoluteExpiration, TimeSpan.FromHours(24), CacheItemPriority.Normal, null);
-			}
-
-			return model;
+			return StatusHelper.GetStatus(token);
 		}
 
 		public HttpResponseMessage Post(UserStatusModel userStatus)
 		{
-			if (ModelState.IsValid)
-			{
-				if (string.IsNullOrEmpty(userStatus.Token) || userStatus.Token.Length != 32 || !Enum.IsDefined(typeof(UserStatusEnum), userStatus.Status))
-					return new HttpResponseMessage(HttpStatusCode.BadRequest);
-
-				string uriString = ConfigurationManager.AppSettings["SQLSERVER_CONNECTION_STRING"];
-				using (UserStatusDataContext context = new UserStatusDataContext(uriString))
-				{
-					UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
-					if (user != null)
-					{
-						user.Status = userStatus.Status;
-						user.LastUpdated = DateTime.UtcNow;
-						HttpRuntime.Cache.Remove(userStatus.Token);
-					}
-					else
-					{
-						context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
-					}
-
-					context.SubmitChanges();
-				}
+			if (ModelState.IsValid && StatusHelper.UpdateStatus(userStatus))
 				return new HttpResponseMessage(HttpStatusCode.Accepted);
-			}
 
 			return new HttpResponseMessage(HttpStatusCode.BadRequest);
 		}
