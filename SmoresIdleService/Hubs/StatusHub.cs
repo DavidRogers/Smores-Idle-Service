@@ -8,6 +8,7 @@ using SmoresIdleService.Models;
 
 namespace SmoresIdleService.Hubs
 {
+	[HubName("status")]
 	public class StatusHub : Hub
 	{
 		public bool Register()
