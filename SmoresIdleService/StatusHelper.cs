@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
+using Microsoft.AspNet.SignalR.Hubs;
 using SmoresIdleService.Controllers;
+using SmoresIdleService.Hubs;
 using SmoresIdleService.Models;
 
 namespace SmoresIdleService
@@ -59,6 +63,23 @@ namespace SmoresIdleService
 			}
 
 			return true;
+		}
+
+		private static ConcurrentDictionary<string, List<string>> GetSubscriptionsFromCache(string key)
+		{
+			return (ConcurrentDictionary<string, List<string>>) HttpRuntime.Cache.Get(key);
+		}
+
+		public static void NotifyStatusSubscribers(IHubConnectionContext hubContext, UserStatusModel userStatus)
+		{
+			var reverseSubscriptions = GetSubscriptionsFromCache(StatusHub.ReverseUserSubscriptionsCacheKey);
+
+			List<string> subsciptions;
+			if (reverseSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
+			{
+				foreach (string callerId in subsciptions)
+					hubContext.Client(callerId).StatusChanged(userStatus);
+			}
 		}
 	}
 }

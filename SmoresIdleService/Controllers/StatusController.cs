@@ -30,7 +30,7 @@ namespace SmoresIdleService.Controllers
 			{
 				// tell the hub connections about this event during the transition!
 				IHubContext context = GlobalHost.ConnectionManager.GetHubContext<StatusHub>();
-				context.Clients.All.StatusChanged(userStatus);
+				StatusHelper.NotifyStatusSubscribers(context.Clients, userStatus);
 
 				return new HttpResponseMessage(HttpStatusCode.Accepted);
 			}
