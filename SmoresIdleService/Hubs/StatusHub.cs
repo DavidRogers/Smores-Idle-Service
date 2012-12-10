@@ -65,7 +65,7 @@ namespace SmoresIdleService.Hubs
 			return true;
 		}
 
-		public void StatusChanged(UserStatusModel userStatus)
+		public void UpdateStatus(UserStatusModel userStatus)
 		{
 			if (!StatusHelper.UpdateStatus(userStatus))
 				return;
