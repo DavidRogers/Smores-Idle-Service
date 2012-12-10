@@ -9,14 +9,14 @@ namespace SmoresIdleService.Controllers
 	{
 		public ActionResult HealthCheck()
 		{
-			return new ContentResult { Content = "Good to go!", ContentType = "text/plain" };
+			return new ContentResult { Content = "Feeling good!", ContentType = "text/plain" };
 		}
 
 		public ActionResult HubHealthCheck()
 		{
 			IHubContext context = GlobalHost.ConnectionManager.GetHubContext<StatusHub>();
 			context.Clients.All.HealthCheck("Feeling good!");
-			return new ContentResult { Content = "Good to go!", ContentType = "text/plain" };
+			return new ContentResult { Content = "Feeling good!", ContentType = "text/plain" };
 		}
 	}
 }
