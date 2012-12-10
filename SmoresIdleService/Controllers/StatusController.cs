@@ -1,11 +1,9 @@
-﻿using System;
-using System.Configuration;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Web;
-using System.Web.Caching;
 using System.Web.Http;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
+using SmoresIdleService.Hubs;
 using SmoresIdleService.Models;
 
 namespace SmoresIdleService.Controllers
@@ -29,7 +27,13 @@ namespace SmoresIdleService.Controllers
 		public HttpResponseMessage Post(UserStatusModel userStatus)
 		{
 			if (ModelState.IsValid && StatusHelper.UpdateStatus(userStatus))
+			{
+				// tell the hub connections about this event during the transition!
+				IHubContext context = GlobalHost.ConnectionManager.GetHubContext<StatusHub>();
+				context.Clients.All.StatusChanged(userStatus);
+
 				return new HttpResponseMessage(HttpStatusCode.Accepted);
+			}
 
 			return new HttpResponseMessage(HttpStatusCode.BadRequest);
 		}
