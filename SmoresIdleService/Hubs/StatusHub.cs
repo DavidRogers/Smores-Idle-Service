@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Hubs;
 using SmoresIdleService.Models;
@@ -76,6 +75,18 @@ namespace SmoresIdleService.Hubs
 				foreach (string callerId in subsciptions)
 					Clients.Client(callerId).StatusChanged(userStatus);
 			}
+		}
+
+		public string[] GetSubscriptions()
+		{
+			List<string> subscriptions;
+			return s_userSubscriptions.TryGetValue(Context.ConnectionId, out subscriptions) ? subscriptions.ToArray() : null;
+		}
+
+		public int GetSubscriberCount()
+		{
+			List<string> subscriptions;
+			return s_reverseUserSubscriptions.TryGetValue(Context.ConnectionId, out subscriptions) ? subscriptions.Count : 0;
 		}
 
 		// a user can have many subscribers attached
