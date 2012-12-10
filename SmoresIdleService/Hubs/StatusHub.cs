@@ -53,6 +53,28 @@ namespace SmoresIdleService.Hubs
 			return StatusHelper.GetStatus(userToken);
 		}
 
+		public UserStatusModel[] AddUserSubscriptions(string[] userTokens)
+		{
+			if (userTokens == null || userTokens.Length == 0)
+				return null;
+
+			List<UserStatusModel> models = new List<UserStatusModel>();
+			List<string> subscription = m_userSubscriptions.GetOrAdd(Context.ConnectionId, s => new List<string>());
+			foreach (string userToken in userTokens)
+			{
+				if (!subscription.Contains(userToken))
+				{
+					subscription.Add(userToken);
+					List<string> reverseSubscription = m_reverseUserSubscriptions.GetOrAdd(userToken, s => new List<string>());
+					if (!reverseSubscription.Contains(Context.ConnectionId))
+						reverseSubscription.Add(Context.ConnectionId);
+				}
+				models.Add(StatusHelper.GetStatus(userToken));
+			}
+
+			return models.ToArray();
+		}
+
 		public bool RemoveUserSubscription(string userToken)
 		{
 			if (string.IsNullOrWhiteSpace(userToken))
