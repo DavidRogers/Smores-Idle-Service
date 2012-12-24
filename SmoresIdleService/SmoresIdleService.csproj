@@ -147,7 +147,8 @@
     <Compile Include="Models\UserStatusModel.cs" />
     <Compile Include="Models\UserSubscription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatusHelper.cs" />
+    <Compile Include="StatusService.cs" />
+    <Compile Include="SubscriptionService.cs" />
     <Compile Include="UserStatus.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

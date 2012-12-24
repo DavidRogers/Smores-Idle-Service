@@ -3,6 +3,15 @@ using Newtonsoft.Json;
 
 namespace SmoresIdleService.Models
 {
+	public enum UserStatusEnum
+	{
+		Unknown = 0,
+		Idle = 1,
+		Busy = 3,
+		Away = 4,
+		Active = 5
+	}
+
 	public class UserStatusModel
 	{
 		[JsonProperty(Required = Required.Always)]

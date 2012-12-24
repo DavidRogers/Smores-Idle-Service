@@ -6,13 +6,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Caching;
 using Microsoft.AspNet.SignalR.Hubs;
-using SmoresIdleService.Controllers;
 using SmoresIdleService.Hubs;
 using SmoresIdleService.Models;
 
 namespace SmoresIdleService
 {
-	public class StatusHelper
+	public class StatusService
 	{
 		public static UserStatusModel GetStatus(string token)
 		{
