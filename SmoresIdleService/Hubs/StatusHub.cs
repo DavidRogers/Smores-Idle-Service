@@ -12,7 +12,8 @@ namespace SmoresIdleService.Hubs
 	{
 		public StatusHub()
 		{
-			Subscriptions = new SubscriptionService();
+			// get existing subscriptions if they exist
+			Subscriptions = (SubscriptionService) HttpRuntime.Cache.Get(StatusHub.UserSubscriptionsCacheKey) ?? new SubscriptionService();
 			HttpRuntime.Cache.Insert(StatusHub.UserSubscriptionsCacheKey, Subscriptions);
 		}
 
