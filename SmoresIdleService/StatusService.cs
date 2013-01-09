@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -64,17 +63,17 @@ namespace SmoresIdleService
 			return true;
 		}
 
-		private static ConcurrentDictionary<string, List<string>> GetSubscriptionsFromCache(string key)
+		internal static SubscriptionService GetSubscriptionsFromCache()
 		{
-			return (ConcurrentDictionary<string, List<string>>) HttpRuntime.Cache.Get(key);
+			return (SubscriptionService) HttpRuntime.Cache.Get(StatusHub.UserSubscriptionsCacheKey);
 		}
 
 		public static void NotifyStatusSubscribers(IHubConnectionContext hubContext, UserStatusModel userStatus)
 		{
-			var reverseSubscriptions = GetSubscriptionsFromCache(StatusHub.ReverseUserSubscriptionsCacheKey);
+			SubscriptionService subscriptionService = GetSubscriptionsFromCache();
 
 			List<string> subsciptions;
-			if (reverseSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
+			if (subscriptionService.ReverseUserSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
 			{
 				foreach (string callerId in subsciptions)
 					hubContext.Client(callerId).StatusChanged(userStatus);

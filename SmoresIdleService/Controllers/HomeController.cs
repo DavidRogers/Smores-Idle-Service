@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
-using SmoresIdleService.Hubs;
 
 namespace SmoresIdleService.Controllers
 {
@@ -19,16 +16,15 @@ namespace SmoresIdleService.Controllers
 		{
 			try
 			{
-				DefaultHubManager hd = new DefaultHubManager(GlobalHost.DependencyResolver);
-				StatusHub hub = hd.ResolveHub("status") as StatusHub;
-				if (hub != null)
+				SubscriptionService service = StatusService.GetSubscriptionsFromCache();
+				if (service != null)
 				{
-					int connections = hub.Subscriptions.UserSubscriptions.Count;
+					int connections = service.UserSubscriptions.Count;
 					if (connections > 0)
 					{
-						double average = hub.Subscriptions.UserSubscriptions.Average(x => x.Value.Count);
-						int floor = hub.Subscriptions.UserSubscriptions.Min(x => x.Value.Count);
-						int ceiling = hub.Subscriptions.UserSubscriptions.Max(x => x.Value.Count);
+						double average = service.UserSubscriptions.Average(x => x.Value.Count);
+						int floor = service.UserSubscriptions.Min(x => x.Value.Count);
+						int ceiling = service.UserSubscriptions.Max(x => x.Value.Count);
 
 						StringBuilder healthContent = new StringBuilder();
 						healthContent.AppendLine("Connection Health");

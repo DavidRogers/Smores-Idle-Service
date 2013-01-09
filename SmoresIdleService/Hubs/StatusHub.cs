@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNet.SignalR.Hubs;
 using SmoresIdleService.Models;
 
@@ -12,6 +13,7 @@ namespace SmoresIdleService.Hubs
 		public StatusHub()
 		{
 			Subscriptions = new SubscriptionService();
+			HttpRuntime.Cache.Insert(StatusHub.UserSubscriptionsCacheKey, Subscriptions);
 		}
 
 		internal SubscriptionService Subscriptions { get; private set; }
@@ -56,15 +58,15 @@ namespace SmoresIdleService.Hubs
 			return true;
 		}
 
-		public void UpdateStatus(UserStatusModel userStatus)
+		public bool UpdateStatus(UserStatusModel userStatus)
 		{
 			if (!StatusService.UpdateStatus(userStatus))
-				throw new ArgumentException("Data is invalid", "userStatus");
+				return false;
 
 			StatusService.NotifyStatusSubscribers(Clients, userStatus);
+			return true;
 		}
 
 		internal const string UserSubscriptionsCacheKey = "UserSubscriptions";
-		internal const string ReverseUserSubscriptionsCacheKey = "ReverseUserSubscriptions";
 	}
 }
