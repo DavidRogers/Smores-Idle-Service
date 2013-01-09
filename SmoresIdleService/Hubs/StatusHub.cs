@@ -59,6 +59,20 @@ namespace SmoresIdleService.Hubs
 			return true;
 		}
 
+		public void RemoveUserSubscriptions(string[] userTokens)
+		{
+			if (userTokens == null || userTokens.Length == 0)
+				return;
+
+			foreach (string userToken in userTokens)
+			{
+				if (string.IsNullOrWhiteSpace(userToken))
+					continue;
+
+				Subscriptions.Remove(Context.ConnectionId, userToken);
+			}
+		}
+
 		public bool UpdateStatus(UserStatusModel userStatus)
 		{
 			if (!StatusService.UpdateStatus(userStatus))
