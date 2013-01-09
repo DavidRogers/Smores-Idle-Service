@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Hubs;
 using SmoresIdleService.Models;
@@ -58,7 +59,7 @@ namespace SmoresIdleService.Hubs
 		public void UpdateStatus(UserStatusModel userStatus)
 		{
 			if (!StatusService.UpdateStatus(userStatus))
-				return;
+				throw new ArgumentException("Data is invalid", "userStatus");
 
 			StatusService.NotifyStatusSubscribers(Clients, userStatus);
 		}

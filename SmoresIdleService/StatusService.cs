@@ -39,7 +39,7 @@ namespace SmoresIdleService
 
 		public static bool UpdateStatus(UserStatusModel userStatus)
 		{
-			if (string.IsNullOrEmpty(userStatus.Token) || userStatus.Token.Length != 32 || !Enum.IsDefined(typeof(UserStatusEnum), userStatus.Status))
+			if (userStatus == null || string.IsNullOrEmpty(userStatus.Token) || userStatus.Token.Length != 32 || !Enum.IsDefined(typeof(UserStatusEnum), userStatus.Status))
 				return false;
 
 			userStatus.LastUpdated = DateTime.UtcNow;
