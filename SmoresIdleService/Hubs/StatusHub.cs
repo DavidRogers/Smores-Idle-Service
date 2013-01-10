@@ -13,11 +13,19 @@ namespace SmoresIdleService.Hubs
 		public StatusHub()
 		{
 			// get existing subscriptions if they exist
-			Subscriptions = (SubscriptionService) HttpRuntime.Cache.Get(StatusHub.UserSubscriptionsCacheKey) ?? new SubscriptionService();
-			HttpRuntime.Cache.Insert(StatusHub.UserSubscriptionsCacheKey, Subscriptions);
+			Subscriptions = (SubscriptionService) HttpRuntime.Cache.Get(UserSubscriptionsCacheKey) ?? new SubscriptionService();
+			HttpRuntime.Cache.Insert(UserSubscriptionsCacheKey, Subscriptions);
 		}
 
 		internal SubscriptionService Subscriptions { get; private set; }
+
+		public override Task OnConnected()
+		{
+			if (!Subscriptions.UserSubscriptions.ContainsKey(Context.ConnectionId))
+				Clients.Caller.ReSubscribe();
+
+			return base.OnConnected();
+		}
 
 		public override Task OnDisconnected()
 		{
