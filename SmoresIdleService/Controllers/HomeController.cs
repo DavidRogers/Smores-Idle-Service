@@ -25,10 +25,12 @@ namespace SmoresIdleService.Controllers
 						double average = service.UserSubscriptions.Average(x => x.Value.Count);
 						int floor = service.UserSubscriptions.Min(x => x.Value.Count);
 						int ceiling = service.UserSubscriptions.Max(x => x.Value.Count);
+						int subscriptions = service.UserSubscriptions.Sum(x => x.Value.Count);
 
 						StringBuilder healthContent = new StringBuilder();
 						healthContent.AppendLine("Connection Health");
 						healthContent.AppendLine(string.Format("{0} total connections", connections));
+						healthContent.AppendLine(string.Format("{0} total subscriptions", subscriptions));
 						healthContent.AppendLine(string.Format("{0} average subscriptions per connection", average));
 						healthContent.AppendLine(string.Format("{0} subscriptions is the least", floor));
 						healthContent.AppendLine(string.Format("{0} subscriptions is the most", ceiling));
