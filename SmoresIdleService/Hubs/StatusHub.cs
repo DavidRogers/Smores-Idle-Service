@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -83,6 +82,9 @@ namespace SmoresIdleService.Hubs
 
 		public bool UpdateStatus(UserStatusModel userStatus)
 		{
+			if (!Subscriptions.UserSubscriptions.ContainsKey(Context.ConnectionId))
+				Clients.Caller.ReSubscribe();
+
 			if (!StatusService.UpdateStatus(userStatus))
 				return false;
 
