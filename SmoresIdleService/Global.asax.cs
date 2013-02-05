@@ -13,14 +13,15 @@ namespace SmoresIdleService
 	{
 		protected void Application_Start()
 		{
+			RouteTable.Routes.MapHubs("/streaming", new HubConfiguration { EnableJavaScriptProxies = false });
+
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 
-			RouteTable.Routes.MapHubs("~/streaming", new HubConfiguration { Resolver = GlobalHost.DependencyResolver });
-
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
+
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 	}
