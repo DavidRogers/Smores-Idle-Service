@@ -10,8 +10,6 @@ namespace SmoresIdleService
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-			routes.MapHubs("~/streaming", new HubConfiguration { Resolver = GlobalHost.DependencyResolver });
-
 			routes.MapRoute(
 				name: "Default",
 				url: "{controller}/{action}/{id}",
