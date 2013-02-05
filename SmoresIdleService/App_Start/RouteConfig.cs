@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using Microsoft.AspNet.SignalR;
 
 namespace SmoresIdleService
 {
@@ -8,6 +9,8 @@ namespace SmoresIdleService
 		public static void RegisterRoutes(RouteCollection routes)
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+			routes.MapHubs("~/streaming", new HubConfiguration { Resolver = GlobalHost.DependencyResolver });
 
 			routes.MapRoute(
 				name: "Default",
