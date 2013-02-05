@@ -11,7 +11,7 @@ namespace SmoresIdleService
 		public static void Start()
 		{
 			// Register the default hubs route: ~/signalr/hubs
-			RouteTable.Routes.MapHubs("~/streaming");
+			RouteTable.Routes.MapHubs("~/streaming", new HubConfiguration { Resolver = GlobalHost.DependencyResolver });
 		}
 	}
 }
