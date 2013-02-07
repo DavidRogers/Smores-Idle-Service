@@ -32,6 +32,7 @@ namespace SmoresIdleService
 						Token = token
 					};
 				}
+
 				HttpRuntime.Cache.Add(token, model, null, Cache.NoAbsoluteExpiration, TimeSpan.FromHours(24), CacheItemPriority.Normal, null);
 			}
 			return model;
