@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Linq;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
@@ -49,15 +50,15 @@ namespace SmoresIdleService
 				if (user != null)
 				{
 					user.Status = userStatus.Status;
-					user.LastUpdated = userStatus.LastUpdated;
+					user.LastUpdated = DateTime.UtcNow;
 					HttpRuntime.Cache.Remove(userStatus.Token);
 				}
 				else
 				{
-					context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = userStatus.LastUpdated });
+					context.UserStatus.InsertOnSubmit(new UserStatus { UserHash = userStatus.Token, Status = userStatus.Status, LastUpdated = DateTime.UtcNow });
 				}
 
-				context.SubmitChanges();
+				context.SubmitChanges(ConflictMode.ContinueOnConflict);
 			}
 
 			return true;
