@@ -72,14 +72,15 @@ namespace SmoresIdleService
 
 		public static void NotifyStatusSubscribers(IHubConnectionContext hubContext, UserStatusModel userStatus)
 		{
-			SubscriptionService subscriptionService = GetSubscriptionsFromCache();
+			////SubscriptionService subscriptionService = GetSubscriptionsFromCache();
 
-			List<string> subsciptions;
-			if (subscriptionService.ReverseUserSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
-			{
-				foreach (string callerId in subsciptions)
-					hubContext.Client(callerId).StatusChanged(userStatus);
-			}
+			////List<string> subsciptions;
+			////if (subscriptionService.ReverseUserSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
+			////{
+			////	foreach (string callerId in subsciptions)
+			////		hubContext.Client(callerId).StatusChanged(userStatus);
+			////}
+			hubContext.Group(userStatus.Token).StatusChanged(userStatus);
 		}
 	}
 }

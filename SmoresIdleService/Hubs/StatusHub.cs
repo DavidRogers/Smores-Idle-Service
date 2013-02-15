@@ -21,9 +21,6 @@ namespace SmoresIdleService.Hubs
 
 		public override Task OnConnected()
 		{
-			if (!Subscriptions.UserSubscriptions.ContainsKey(Context.ConnectionId))
-				Clients.Caller.ReSubscribe();
-
 			return base.OnConnected();
 		}
 
@@ -39,6 +36,7 @@ namespace SmoresIdleService.Hubs
 			if (string.IsNullOrWhiteSpace(userToken))
 				return null;
 
+			Groups.Add(Context.ConnectionId, userToken);
 			Subscriptions.Add(Context.ConnectionId, userToken);
 			return StatusService.GetStatus(userToken);
 		}
@@ -51,6 +49,7 @@ namespace SmoresIdleService.Hubs
 			List<UserStatusModel> models = new List<UserStatusModel>();
 			foreach (string userToken in userTokens)
 			{
+				Groups.Add(Context.ConnectionId, userToken);
 				Subscriptions.Add(Context.ConnectionId, userToken);
 				models.Add(StatusService.GetStatus(userToken));
 			}
@@ -63,6 +62,7 @@ namespace SmoresIdleService.Hubs
 			if (string.IsNullOrWhiteSpace(userToken))
 				return false;
 
+			Groups.Remove(Context.ConnectionId, userToken);
 			Subscriptions.Remove(Context.ConnectionId, userToken);
 			return true;
 		}
@@ -77,6 +77,7 @@ namespace SmoresIdleService.Hubs
 				if (string.IsNullOrWhiteSpace(userToken))
 					continue;
 
+				Groups.Remove(Context.ConnectionId, userToken);
 				Subscriptions.Remove(Context.ConnectionId, userToken);
 			}
 		}
