@@ -86,7 +86,10 @@ namespace SmoresIdleService.Hubs
 		{
 			if (!Subscriptions.UserSubscriptions.ContainsKey(Context.ConnectionId) ||
 				!Subscriptions.UserSubscriptions[Context.ConnectionId].Contains(userStatus.Token))
+			{
 				Clients.Caller.ReSubscribe();
+				return false;
+			}
 
 			if (!StatusService.UpdateStatus(userStatus))
 				return false;
