@@ -97,7 +97,7 @@ namespace SmoresIdleService
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserHash", DbType="Char(128) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserHash", DbType="Char(32) NOT NULL", CanBeNull=false, IsPrimaryKey=true, UpdateCheck=UpdateCheck.Never)]
 		public string UserHash
 		{
 			get
@@ -117,7 +117,7 @@ namespace SmoresIdleService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Status", DbType="Int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public int Status
 		{
 			get
@@ -137,7 +137,7 @@ namespace SmoresIdleService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastUpdated", DbType="DateTime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastUpdated", DbType="DateTime NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime LastUpdated
 		{
 			get
