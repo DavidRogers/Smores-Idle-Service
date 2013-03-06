@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Linq;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
 using Microsoft.AspNet.SignalR.Hubs;
-using SmoresIdleService.Hubs;
 using SmoresIdleService.Models;
 
 namespace SmoresIdleService
@@ -65,21 +63,8 @@ namespace SmoresIdleService
 			return true;
 		}
 
-		internal static SubscriptionService GetSubscriptionsFromCache()
-		{
-			return (SubscriptionService) HttpRuntime.Cache.Get(StatusHub.UserSubscriptionsCacheKey);
-		}
-
 		public static void NotifyStatusSubscribers(IHubConnectionContext hubContext, UserStatusModel userStatus)
 		{
-			////SubscriptionService subscriptionService = GetSubscriptionsFromCache();
-
-			////List<string> subsciptions;
-			////if (subscriptionService.ReverseUserSubscriptions.TryGetValue(userStatus.Token, out subsciptions))
-			////{
-			////	foreach (string callerId in subsciptions)
-			////		hubContext.Client(callerId).StatusChanged(userStatus);
-			////}
 			hubContext.Group(userStatus.Token).StatusChanged(userStatus);
 		}
 	}
