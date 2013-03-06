@@ -12,12 +12,8 @@ namespace SmoresIdleService.Hubs
 	{
 		public StatusHub()
 		{
-			// get existing subscriptions if they exist
-			Subscriptions = (SubscriptionService) HttpRuntime.Cache.Get(UserSubscriptionsCacheKey) ?? new SubscriptionService();
-			HttpRuntime.Cache.Insert(UserSubscriptionsCacheKey, Subscriptions);
 		}
 
-		internal SubscriptionService Subscriptions { get; private set; }
 
 		public override Task OnConnected()
 		{
@@ -27,7 +23,6 @@ namespace SmoresIdleService.Hubs
 		public override Task OnDisconnected()
 		{
 			// clean up subscription list
-			Subscriptions.Remove(Context.ConnectionId);
 			return base.OnDisconnected();
 		}
 
@@ -37,7 +32,6 @@ namespace SmoresIdleService.Hubs
 				return null;
 
 			Groups.Add(Context.ConnectionId, userToken);
-			Subscriptions.Add(Context.ConnectionId, userToken);
 			return StatusService.GetStatus(userToken);
 		}
 
@@ -50,7 +44,6 @@ namespace SmoresIdleService.Hubs
 			foreach (string userToken in userTokens)
 			{
 				Groups.Add(Context.ConnectionId, userToken);
-				Subscriptions.Add(Context.ConnectionId, userToken);
 				models.Add(StatusService.GetStatus(userToken));
 			}
 
@@ -63,7 +56,6 @@ namespace SmoresIdleService.Hubs
 				return false;
 
 			Groups.Remove(Context.ConnectionId, userToken);
-			Subscriptions.Remove(Context.ConnectionId, userToken);
 			return true;
 		}
 
@@ -78,19 +70,11 @@ namespace SmoresIdleService.Hubs
 					continue;
 
 				Groups.Remove(Context.ConnectionId, userToken);
-				Subscriptions.Remove(Context.ConnectionId, userToken);
 			}
 		}
 
 		public bool UpdateStatus(UserStatusModel userStatus)
 		{
-			if (!Subscriptions.UserSubscriptions.ContainsKey(Context.ConnectionId) ||
-				!Subscriptions.UserSubscriptions[Context.ConnectionId].Contains(userStatus.Token))
-			{
-				Clients.Caller.ReSubscribe();
-				return false;
-			}
-
 			if (!StatusService.UpdateStatus(userStatus))
 				return false;
 
