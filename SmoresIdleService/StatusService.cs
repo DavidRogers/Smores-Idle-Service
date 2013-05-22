@@ -29,6 +29,15 @@ namespace SmoresIdleService
 						LastUpdated = user == null ? new DateTime().ToUniversalTime() : user.LastUpdated,
 						Token = token
 					};
+					// these are some basic sanity checks in the case where someone stopped using the client for long periods of time
+					if (model.Status == (int) UserStatusEnum.Active && (DateTime.UtcNow - model.LastUpdated) > TimeSpan.FromDays(2))
+						model.Status = (int) UserStatusEnum.Unknown;
+					if (model.Status == (int) UserStatusEnum.Away && (DateTime.UtcNow - model.LastUpdated) > TimeSpan.FromDays(7))
+						model.Status = (int) UserStatusEnum.Unknown;
+					if (model.Status == (int) UserStatusEnum.Busy && (DateTime.UtcNow - model.LastUpdated) > TimeSpan.FromDays(1))
+						model.Status = (int) UserStatusEnum.Unknown;
+					if (model.Status == (int) UserStatusEnum.Idle && (DateTime.UtcNow - model.LastUpdated) > TimeSpan.FromHours(4))
+						model.Status = (int) UserStatusEnum.Unknown;
 				}
 
 				HttpRuntime.Cache.Add(token, model, null, Cache.NoAbsoluteExpiration, TimeSpan.FromHours(24), CacheItemPriority.Normal, null);
@@ -48,6 +57,9 @@ namespace SmoresIdleService
 				UserStatus user = context.UserStatus.FirstOrDefault(x => x.UserHash == userStatus.Token);
 				if (user != null)
 				{
+					if (user.Status == userStatus.Status)
+						return true;
+
 					user.Status = userStatus.Status;
 					user.LastUpdated = DateTime.UtcNow;
 					HttpRuntime.Cache.Remove(userStatus.Token);
