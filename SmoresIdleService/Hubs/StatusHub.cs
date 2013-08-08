@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using SmoresIdleService.Models;
@@ -14,7 +13,6 @@ namespace SmoresIdleService.Hubs
 		{
 		}
 
-
 		public override Task OnConnected()
 		{
 			return base.OnConnected();
@@ -24,6 +22,11 @@ namespace SmoresIdleService.Hubs
 		{
 			// clean up subscription list
 			return base.OnDisconnected();
+		}
+
+		public override Task OnReconnected()
+		{
+			return base.OnReconnected();
 		}
 
 		public UserStatusModel AddUserSubscription(string userToken)
